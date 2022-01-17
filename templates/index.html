@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Slot</th>
+            <th scope="col">Car Number</th>
+            <th scope="col">Parked At</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for slot in slots %}
+            <tr>
+
+                <th scope="row">{{ slot.id }}</th>
+                <td>{{ slot.vehicle_no }}</td>
+
+                <td>
+                    {% if slot.vehicle_no != "" %}
+                        {{ slot.updated_at }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if slot.vehicle_no == '' %}
+                        <a class="btn btn-primary btn_model" data-toggle="modal" data-target="#exampleModal"
+                           data-url="{{ slot.id }}">Park</a>
+                    {% else %}
+                        <a href="{% url 'unpark' slot.id %}" class="btn btn-danger">UnPark</a>
+                    {% endif %}
+                </td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'park' %}">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="staticEmail" class="col-sm-2 col-form-label">Slot </label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly class="form-control-plaintext" name="slot" id="slot"
+                                       value="#id">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputPassword" class="col-sm-2 col-form-label">Car No</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputPassword" name="car_number"
+                                       placeholder="Vehicle Number">
+                            </div>
+                        </div>
+                        <div align="right">
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            $('.btn_model').on("click", function () {
+                let btn = $(this);
+
+                let url = btn.attr('data-url');
+                let model = $('#exampleModal');
+
+                let body = model.find('.modal-body')
+                let id = model.find('#id')
+
+                filename = `/static/films/thumbnails/${url}`
+                document.getElementById("slot").value = ` ${url}`;
+
+                console.log(id)
+                id.html(`${url}`)
+
+
+            })
+
+
+        </script>
+
+{% endblock %}
